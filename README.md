@@ -1,3 +1,4 @@
 # goya
 takumi
 satofumi
+kippei

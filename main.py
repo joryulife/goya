@@ -1,6 +1,7 @@
 import json, config #標準のjsonモジュールとconfig.pyの読み込み
 from requests_oauthlib import OAuth1Session #OAuthのライブラリの読み込み
 import reply
+import search
 
 CK = config.CONSUMER_KEY
 CS = config.CONSUMER_SECRET
@@ -10,4 +11,5 @@ twitter = OAuth1Session(CK, CS, AT, ATS) #認証処理
 
 POSTURL = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
-reply.reply(twitter,1294500665134157825,"reply2")
+#reply.reply(twitter,1294500665134157825,"reply2")
+search.searchmain("#TODOリストゴーヤ",twitter)

@@ -6,5 +6,6 @@ def separate(text):
 
 #テスト
 
-text = "・今日のご飯は何かな\n・今日はメモ帳を買うぞ\n・宿題をするぞ"
+text = "・今日の昼ご飯を作る\n・今日はメモ帳を買うぞ\n・宿題をするぞ"
 print(separate(text))
+

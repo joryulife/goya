@@ -1,9 +1,9 @@
 from requests_oauthlib import OAuth1Session
 import json
 
-
 def searchmain(search_word,twitter):
     tweets = tweet_search(search_word, twitter)
+    """
     for tweet in tweets["statuses"]:
         tweet_id = tweet[u'id_str']
         text = tweet[u'text']
@@ -20,7 +20,8 @@ def searchmain(search_word,twitter):
         print ("screen_name:", screen_name)
         print ("user_name:", user_name)
         print("  ")
-    return
+        """
+    return tweets
 
 def tweet_search(search_word, twitter):
     url = "https://api.twitter.com/1.1/search/tweets.json?"
@@ -28,7 +29,7 @@ def tweet_search(search_word, twitter):
         "q": search_word,
         "lang": "ja",
         "result_type": "recent",
-        "count": "15"
+        "count": "10"
         }
     responce = twitter.get(url, params = params)
     if responce.status_code != 200:

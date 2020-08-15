@@ -1,7 +1,11 @@
 import sqlite3
 
-conn = sqlite3.connect('goya.db')
+connAM = sqlite3.connect('am.db')
+connPM = sqlite3.connect('pm.db')
 
-c = conn.cursor()
+cA = connAM.cursor()
+cB = connPM.cursor()
 
-c.execute('CREATE TABLE tweets (id int, todo text, tweetId int, userId int)')
+cA.execute('CREATE TABLE tweets (id int, todo text, tweetId int, userId int)')
+cB.execute('CREATE TABLE tweets (id int, todo text, tweetId int, userId int)')
+

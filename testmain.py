@@ -49,14 +49,16 @@ def MonitarTL():
         Lastid = tweets["statuses"][0][u'id_str']
         for tweet in tweets["statuses"]:
             try:
-                if (key2 in tweet["text"] | key3 in tweet["text"]):
-                    #削除して
+                if (key2 in tweet["text"] or key3 in tweet["text"]):
+                    doneTodos = separate.separate(tweet["text"],searchKey,key2,key3)
+                    for doneTodo in doneTodos:
+                        print("doneTodo: " + doneTodo)
+                        dbAM.execute("DELETE FROM tweets WHERE todo=", (doneTodo,))
                 else :
                     print("tweet.text: ", tweet["text"])
                     todos = separate.separate(tweet["text"],searchKey,key2,key3)
                     reply.reply(twitter,tweet[u'id_str'],separate.delet(tweet["text"],searchKey,key2,key3) + "\nをタスクに追加だね！\n報告しないと責めるよ！")
                     for todo in todos:
-                        print("todo: " + todo)
                         dbAM.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
             except Exception as e:
                 print(e) 
@@ -69,10 +71,10 @@ def MonitarTL():
 def job(DBNo):
     if (DBNo == 1):
         print("DB1Goooooya!")
-        #DBAM　に参照要請、催促ツイート
+        #DBAMに参照要請、催促ツイート
     elif(DBNo == 2):
         print("DBGooooooya!")
-        #DBOM に参照要請　催促ついーと
+        #DBOM に参照要請催促ついーと
 
 
 

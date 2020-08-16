@@ -42,14 +42,18 @@ def MonitarTL():
         Lastid = tweets["statuses"][0][u'id_str']
         for tweet in tweets["statuses"]:
             text = separate.delhash(tweet[u'text'],searchKey)
+            #if タスクの宣言なら
             reply.reply(twitter,tweet[u'id_str'],text + "\nをタスクに追加だね！\n報告しないと責めるよ！")
-    print("go-ya")
+            #午前午後判定してDB格納
+            #ifel "#searchKey" + "#finish"or"#start" + "タスク"ならDBに変更要請
 
 def job(DBNo):
     if (DBNo == 1):
         print("DB1Goooooya!")
+        #DBAM　に参照要請、催促ツイート
     elif(DBNo == 2):
         print("DBGooooooya!")
+        #DBOM に参照要請　催促ついーと
 
 
 

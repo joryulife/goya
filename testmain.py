@@ -23,6 +23,8 @@ POSTURL = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 Lastid = "0"
 oldtweet = None
 searchKey = "#TODOリストゴーヤ"
+key2 = "#finish"
+key3 = "#start"
 
 oldtweet = search.searchmain(searchKey,twitter,Lastid,"1")
 Lastid = oldtweet["statuses"][0][u'id_str']
@@ -47,21 +49,22 @@ def MonitarTL():
         Lastid = tweets["statuses"][0][u'id_str']
         for tweet in tweets["statuses"]:
             try:
-                print("tweet.text: ", tweet["text"])
-                todos = separate.separate(tweet["text"])
-                for todo in todos:
-                    print("todo: " + todo)
-                    dbAM.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
+                if (key2 in tweet["text"] | key3 in tweet["text"]):
+                    #削除して
+                else :
+                    print("tweet.text: ", tweet["text"])
+                    todos = separate.separate(tweet["text"],searchKey,key2,key3)
+                    reply.reply(twitter,tweet[u'id_str'],separate.delet(tweet["text"],searchKey,key2,key3) + "\nをタスクに追加だね！\n報告しないと責めるよ！")
+                    for todo in todos:
+                        print("todo: " + todo)
+                        dbAM.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
             except Exception as e:
                 print(e) 
         connAM.commit()
         connPM.commit()
         connAM.commit()
         connPM.commit()
-            # #if タスクの宣言なら
-            # reply.reply(twitter,tweet[u'id_str'],text + "\nをタスクに追加だね！\n報告しないと責めるよ！")
             # #午前午後判定してDB格納
-            # #ifel "#searchKey" + "#finish"or"#start" + "タスク"ならDBに変更要請
 
 def job(DBNo):
     if (DBNo == 1):

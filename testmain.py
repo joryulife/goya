@@ -6,6 +6,7 @@ import datetime
 import time
 import schedule
 import separate
+import db
 
 
 CK = config.CONSUMER_KEY
@@ -21,12 +22,16 @@ POSTURL = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
 Lastid = "0"
 oldtweet = None
-searchKey = "#TODOlistゴーヤ"
+searchKey = "#TODOリストゴーヤ"
 
 oldtweet = search.searchmain(searchKey,twitter,Lastid,"1")
 Lastid = oldtweet["statuses"][0][u'id_str']
 
+connAM, dbAM = db.initDBAM()
+connPM, dbPM = db.initDBPM()
+
 def MonitarTL():
+    global connAM, dbAM, connPM, dbPM
     global Lastid
     global oldtweet
     global searchKey
@@ -41,11 +46,22 @@ def MonitarTL():
     else:
         Lastid = tweets["statuses"][0][u'id_str']
         for tweet in tweets["statuses"]:
-            text = separate.delhash(tweet[u'text'],searchKey)
-            #if タスクの宣言なら
-            reply.reply(twitter,tweet[u'id_str'],text + "\nをタスクに追加だね！\n報告しないと責めるよ！")
-            #午前午後判定してDB格納
-            #ifel "#searchKey" + "#finish"or"#start" + "タスク"ならDBに変更要請
+            try:
+                print("tweet.text: ", tweet["text"])
+                todos = separate.separate(tweet["text"])
+                for todo in todos:
+                    print("todo: " + todo)
+                    dbAM.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
+            except Exception as e:
+                print(e) 
+        connAM.commit()
+        connPM.commit()
+        connAM.commit()
+        connPM.commit()
+            # #if タスクの宣言なら
+            # reply.reply(twitter,tweet[u'id_str'],text + "\nをタスクに追加だね！\n報告しないと責めるよ！")
+            # #午前午後判定してDB格納
+            # #ifel "#searchKey" + "#finish"or"#start" + "タスク"ならDBに変更要請
 
 def job(DBNo):
     if (DBNo == 1):
@@ -60,7 +76,7 @@ def job(DBNo):
 MonitarTL()
 schedule.every().day.at("11:02").do(job,1)
 schedule.every().day.at("11:03").do(job,2)
-schedule.every(1).minutes.do(MonitarTL)
+schedule.every(10).seconds.do(MonitarTL)
 
 
 while True:

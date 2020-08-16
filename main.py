@@ -18,6 +18,8 @@ POSTURL = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 #reply.reply(twitter,1294500665134157825,"reply2")
 #search.searchmain("#TODOリストゴーヤ",twitter)
 
+Lastid = "0"
+
 def MonitarTL():
     tweets = search.searchmain("TODO~",twitter)
     if (tweets == None):
@@ -36,12 +38,12 @@ def Rimindjob(DBNo):
         #DB1に照会、Falseに
         #reply.reply(twitter,tweetid,"終わってないよ！" + task)
     else:
-        
 
 
 
-schedule.every().day.at("15:00").do(job())
-schedule.every().day.at("18:00").do(job())
+
+schedule.every().day.at("15:00").do(job(1))
+schedule.every().day.at("18:00").do(job(2))
 schedule.every().hour.do(MonitarTL())
 
 

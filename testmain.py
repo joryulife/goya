@@ -5,6 +5,7 @@ import search
 import datetime
 import time
 import schedule
+import separate
 
 
 CK = config.CONSUMER_KEY
@@ -18,8 +19,19 @@ POSTURL = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 #reply.reply(twitter,1294500665134157825,"reply2")
 #search.searchmain("#TODOリストゴーヤ",twitter)
 
+Lastid = "0"
+oldtweet = None
+searchKey = "#TODOlistゴーヤ"
+
+oldtweet = search.searchmain(searchKey,twitter,Lastid,"1")
+Lastid = oldtweet["statuses"][0][u'id_str']
+
 def MonitarTL():
-    tweets = search.searchmain("#TODOリストゴーヤ",twitter)
+    global Lastid
+    global oldtweet
+    global searchKey
+    tweets = None
+    tweets = search.searchmain(searchKey,twitter,Lastid,"20")
     if (tweets == None):
         print("line24")
         return None
@@ -27,18 +39,23 @@ def MonitarTL():
         print("line27")
         return None
     else:
+        Lastid = tweets["statuses"][0][u'id_str']
         for tweet in tweets["statuses"]:
-            reply.reply(twitter,tweet[u'id_str'],tweet[u"text"] +  "\nをタスクに追加だね！\n報告しないと責めるよ！")
+            text = separate.delhash(tweet[u'text'],searchKey)
+            reply.reply(twitter,tweet[u'id_str'],text + "\nをタスクに追加だね！\n報告しないと責めるよ！")
     print("go-ya")
 
-def job():
+def job(DBNo):
+    if (DBNo == 1):
         print("DB1Goooooya!")
+    elif(DBNo == 2):
+        print("DBGooooooya!")
 
 
 
-
-schedule.every().day.at("00:02").do(job)
-schedule.every().day.at("00:03").do(job)
+MonitarTL()
+schedule.every().day.at("11:02").do(job,1)
+schedule.every().day.at("11:03").do(job,2)
 schedule.every(1).minutes.do(MonitarTL)
 
 

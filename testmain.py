@@ -7,6 +7,7 @@ import time
 import schedule
 import separate
 import db
+import datetime
 
 
 CK = config.CONSUMER_KEY
@@ -58,8 +59,15 @@ def MonitarTL():
                     print("tweet.text: ", tweet["text"])
                     todos = separate.separate(tweet["text"],searchKey,key2,key3)
                     reply.reply(twitter,tweet[u'id_str'],separate.delet(tweet["text"],searchKey,key2,key3) + "\nをタスクに追加だね！\n報告しないと責めるよ！")
+                    now = datetime.datetime.now()
+                    if(now.hour < 12):
+                        db = dbAM
+                        print("AM")
+                    else:
+                        db = dbPM
+                        print("PM")
                     for todo in todos:
-                        dbAM.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
+                        db.execute("INSERT INTO tweets (todo, tweetId, userId) VALUES(?, ?, ?)", (todo, int(tweet["id"]), int(tweet["user"]["id"])))
             except Exception as e:
                 print(e) 
         connAM.commit()

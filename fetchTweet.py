@@ -1,5 +1,7 @@
 import tweepy
 import datetime
+import separate
+import db
 
 dt_now = datetime.datetime.now()
 
@@ -14,18 +16,27 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-tweet_data = []#データの格納
 
-# for tweet in api.search(q="TODOリスト⚡️  exclude:retweets",tweet_mode='extended',count=10):
-#     try:
-#         tweet_data.append([tweet.id, tweet.user.screen_name, tweet.created_at, tweet.full_text.replace('\n',''), tweet.favorite_count, tweet.retweet_count, tweet.user.followers_count, tweet.user.friends_count])
-#     except Exception as e:
-#         print(e)
-for tweet in api.search(q="#TODOリストゴーヤ  exclude:retweets",since = datetime.date.today(), tweet_mode='extended',count=10):
+connAM, dbAM = db.initDBAM()
+connPM, dbPM = db.initDBPM()
+
+for tweet in api.search(q="#TODOリストゴーヤ  exclude:retweets", tweet_mode='extended',count=10):
+
     try:
-        tweet_data.append([tweet.full_text.replace('\n',''), tweet.user.screen_name])
+        todos = separate.separate(tweet.full_text)
+        for todo in todos:
+            print("todo: " + todo)
+            print("%s" % todo)
+            print("todo")
+            dbAM.execute("INSERT INTO tweets (todo, tweetId, userId, done) VALUES(?, ?, ?, ?)", (todo, int(tweet.id), int(tweet.user.id), false))
     except Exception as e:
         print(e)
-print(tweet_data)
+
+connAM.commit()
+connPM.commit()
+connAM.close()
+connPM.close()
+
+print(tweets)
 
 
